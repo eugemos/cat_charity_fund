@@ -1,8 +1,9 @@
 from sqlalchemy import Column, Integer, Text, ForeignKey
 
-from .base import FundBase
+from app.core.db import Base
+from .common import FundCommon
 
 
-class Donation(FundBase):
+class Donation(Base, FundCommon):
     user_id = Column(Integer, ForeignKey('user.id'))
     comment = Column(Text, nullable=True)
