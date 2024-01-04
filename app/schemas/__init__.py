@@ -1,7 +1,12 @@
 from .user import UserRead, UserCreate, UserUpdate  # noqa
 from .charity_project import (  # noqa
-    CharityProjectCreate, CharityProjectRetrieve, CharityProjectUpdate
+    CharityProjectCreateInput,
+    CharityProjectUpdateInput,
+    CharityProjectGeneralOutput,
 )
 from .donation import (  # noqa
-    DonationCreate, DonationRetrieve, DonationRetrieveMy
+    DonationCreateInput,
+    DonationCreateOutput,
+    DonationListOutput,
+    DonationListByUserOutput
 )
