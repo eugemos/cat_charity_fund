@@ -10,6 +10,18 @@ class BaseCRUD:
     def __init__(self, model):
         self.model = model
 
+    async def get(
+            self,
+            obj_id: int,
+            session: AsyncSession,
+    ):
+        db_obj = await session.execute(
+            select(self.model).where(
+                self.model.id == obj_id
+            )
+        )
+        return db_obj.scalars().first()
+
     async def get_all(
         self,
         session: AsyncSession
@@ -30,4 +42,5 @@ class BaseCRUD:
         session.add(db_obj)
         await session.commit()
         await session.refresh(db_obj)
+        # print(f'*************\n{obj_in=}\n{obj_in_data=}\n{db_obj=}\n**************')
         return db_obj

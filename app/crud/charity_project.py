@@ -17,7 +17,7 @@ class CharityProjectCRUD(BaseCRUD):
             obj_in: schemas.CharityProjectCreateInput,
             session: AsyncSession,
     ) -> models.CharityProject:
-        return super().create(obj_in, session)
+        return await super().create(obj_in, session)
 
     async def update(
             self,
