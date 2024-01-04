@@ -33,5 +33,5 @@ class DonationCreateOutput(DonationOutputShortened):
 
 class DonationCreateInput(BaseModel):
     """Входная модель для создания."""
-    full_amount: int = Field(..., le=1)
+    full_amount: int = Field(..., ge=1)
     comment: Optional[str] = None

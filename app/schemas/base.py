@@ -6,7 +6,7 @@ from pydantic import BaseModel, Field
 
 class CommonOutput(BaseModel):
     id: int
-    full_amount: int = Field(..., le=1)
+    full_amount: int = Field(..., ge=1)
     create_date: datetime
 
     class Config:
@@ -14,6 +14,6 @@ class CommonOutput(BaseModel):
 
 
 class CommonOutputExtended(CommonOutput):
-    invested_amount: int = Field(..., le=0)
+    invested_amount: int = Field(..., ge=0)
     fully_invested: bool
     close_date: Optional[datetime] = None

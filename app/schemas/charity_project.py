@@ -15,14 +15,14 @@ class CharityProjectInputRequired(BaseModel):
     """Входная модель с обязательными полями."""
     name: str = Field(..., min_length=1, max_length=100)
     description: str = Field(..., min_length=1)
-    full_amount: int = Field(..., le=1)
+    full_amount: int = Field(..., ge=1)
 
 
 class CharityProjectInputOptional(BaseModel):
     """Входная модель с опциональными полями."""
     name: Optional[str] = Field(None, max_length=100)
     description: Optional[str] = None
-    full_amount: int = Field(None, le=1)
+    full_amount: int = Field(None, ge=1)
 
 
 class CharityProjectCreateInput(CharityProjectInputRequired):
