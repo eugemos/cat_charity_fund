@@ -17,7 +17,7 @@ class DonationCRUD(BaseCRUD):
             session: AsyncSession,
             user: models.User,
     ) -> models.Donation:
-        return super().create(obj_in, session, user)
+        return await super().create(obj_in, session, user)
 
     async def get_all_by_user(
         self,
