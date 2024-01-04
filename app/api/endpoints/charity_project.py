@@ -32,7 +32,7 @@ async def create_charity_project(
     response_model=list[schemas.CharityProjectGeneralOutput],
     response_model_exclude_none=True,
 )
-async def list_charity_project(
+async def get_all_charity_projects(
     session: AsyncSession = Depends(get_async_session),
 ):
     charity_projects = await CharityProjectCRUD().get_all(session)
@@ -45,7 +45,7 @@ async def list_charity_project(
     response_model_exclude_none=True,
     dependencies=[Depends(current_superuser)],
 )
-async def partially_update_charity_project(
+async def update_charity_project(
     charity_project_id: int,
     obj_in: schemas.CharityProjectUpdateInput,
     session: AsyncSession = Depends(get_async_session),
@@ -70,7 +70,7 @@ async def partially_update_charity_project(
     response_model_exclude_none=True,
     dependencies=[Depends(current_superuser)],
 )
-async def remove_charity_project(
+async def delete_charity_project(
     charity_project_id: int,
     session: AsyncSession = Depends(get_async_session),
 ):

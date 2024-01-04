@@ -45,7 +45,7 @@ async def get_all_donations(
     response_model=list[schemas.DonationListByUserOutput],
     response_model_exclude_none=True,
 )
-async def get_all_donations(
+async def get_user_donations(
     session: AsyncSession = Depends(get_async_session),
     user: models.User = Depends(current_user),
 ):
