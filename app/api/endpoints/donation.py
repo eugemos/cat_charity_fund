@@ -1,10 +1,11 @@
 from fastapi import APIRouter, Depends
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from app import models, schemas
 from app.core.db import get_async_session
 from app.core.user import current_superuser, current_user
 from app.crud import DonationCRUD
-from app import models, schemas
+from app.services.investment import distribute_investment
 
 # from app.api.validators import check_charity_project_exists
 # check_name_duplicate,
@@ -23,7 +24,10 @@ async def create_donation(
     user: models.User = Depends(current_user),
 ):
     """Только для зарегистрированных пользователей."""
-    donation = await DonationCRUD().create(donation, session, user)
+    invested_amount = await distribute_investment(donation.full_amount)
+    donation = await DonationCRUD().create(
+        donation, invested_amount, session, user
+    )
     return donation
 
 

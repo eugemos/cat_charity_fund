@@ -1,10 +1,11 @@
 from fastapi import APIRouter, Depends
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from app import schemas
 from app.core.db import get_async_session
 from app.core.user import current_superuser
 from app.crud import CharityProjectCRUD
-from app import schemas
+from app.services.investment import require_investment
 
 from app.api.validators import (
     check_charity_project_exists,
@@ -27,7 +28,10 @@ async def create_charity_project(
     session: AsyncSession = Depends(get_async_session),
 ):
     """Только для суперюзеров."""
-    charity_project = await CharityProjectCRUD().create(charity_project, session)
+    invested_amount = await require_investment(charity_project.full_amount)
+    charity_project = await CharityProjectCRUD().create(
+        charity_project, invested_amount, session
+    )
     return charity_project
 
 

@@ -1,3 +1,4 @@
+from datetime import datetime
 # from typing import Optional
 
 from fastapi.encoders import jsonable_encoder
@@ -15,9 +16,10 @@ class CharityProjectCRUD(BaseCRUD):
     async def create(
             self,
             obj_in: schemas.CharityProjectCreateInput,
+            invested_amount: int,
             session: AsyncSession,
     ) -> models.CharityProject:
-        return await super().create(obj_in, session)
+        return await super().create(obj_in, invested_amount, session)
 
     async def update(
             self,
@@ -34,6 +36,7 @@ class CharityProjectCRUD(BaseCRUD):
 
         if db_obj.invested_amount >= db_obj.full_amount:
             db_obj.fully_invested = True
+            db_obj.close_date = datetime.now()
 
         session.add(db_obj)
         await session.commit()
