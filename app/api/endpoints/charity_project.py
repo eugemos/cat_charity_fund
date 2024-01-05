@@ -6,7 +6,11 @@ from app.core.user import current_superuser
 from app.crud import CharityProjectCRUD
 from app import schemas
 
-from app.api.validators import check_charity_project_exists
+from app.api.validators import (
+    check_charity_project_exists,
+    check_charity_project_may_be_deleted,
+    check_charity_project_may_be_updated,
+)
 # check_name_duplicate,
 
 router = APIRouter()
@@ -54,7 +58,7 @@ async def update_charity_project(
     charity_project = await check_charity_project_exists(
         charity_project_id, session
     )
-
+    check_charity_project_may_be_updated(charity_project, obj_in)
     # if obj_in.name is not None:
     #     await check_name_duplicate(obj_in.name, session)
 
@@ -78,5 +82,6 @@ async def delete_charity_project(
     charity_project = await check_charity_project_exists(
         charity_project_id, session
     )
+    check_charity_project_may_be_deleted(charity_project)
     charity_project = await CharityProjectCRUD().remove(charity_project, session)
     return charity_project
