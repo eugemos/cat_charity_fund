@@ -4,7 +4,7 @@ from pydantic import BaseSettings, EmailStr
 
 class Settings(BaseSettings):
     app_author: str
-    database_url: str
+    database_url: str = 'sqlite+aiosqlite:///./fastapi.db'
     # path: str
     app_title: str = 'API QRKot'
     description: str = 'Финальный проект по FastAPI'

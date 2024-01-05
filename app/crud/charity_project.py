@@ -1,8 +1,8 @@
 from datetime import datetime
-# from typing import Optional
+from typing import Optional
 
 from fastapi.encoders import jsonable_encoder
-# from sqlalchemy import select
+from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app import models, schemas
@@ -51,3 +51,13 @@ class CharityProjectCRUD(BaseCRUD):
         await session.delete(db_obj)
         await session.commit()
         return db_obj
+
+    async def get_by_name(
+        self,
+        name: str,
+        session: AsyncSession,
+    ) -> Optional[models.CharityProject]:
+        db_objs = await session.execute(select(self.model).where(
+            self.model.name == name
+        ))
+        return db_objs.scalars().first()

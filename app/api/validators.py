@@ -20,18 +20,30 @@ async def check_charity_project_exists(
     return charity_project
 
 
+async def check_charity_project_name_unique(
+    name: str,
+    session: AsyncSession,
+) -> None:
+    charity_project = await CharityProjectCRUD().get_by_name(name, session)
+    if charity_project is not None:
+        raise HTTPException(
+            status_code=HTTPStatus.BAD_REQUEST,
+            detail='Проект с таким именем уже существует!',
+        )
+
+
 def check_charity_project_may_be_deleted(
     charity_project: models.CharityProject
 ) -> None:
     if charity_project.fully_invested:
         raise HTTPException(
-            status_code=HTTPStatus.UNPROCESSABLE_ENTITY,
-            detail='Проект нельзя удалить: он закрыт!'
+            status_code=HTTPStatus.BAD_REQUEST,
+            detail='В проект были внесены средства, не подлежит удалению!'
         )
     if charity_project.invested_amount > 0:
         raise HTTPException(
-            status_code=HTTPStatus.UNPROCESSABLE_ENTITY,
-            detail='Проект нельзя удалить: в него внесены средства!'
+            status_code=HTTPStatus.BAD_REQUEST,
+            detail='В проект были внесены средства, не подлежит удалению!'
         )
 
 
@@ -41,14 +53,14 @@ def check_charity_project_may_be_updated(
 ) -> None:
     if charity_project.fully_invested:
         raise HTTPException(
-            status_code=HTTPStatus.UNPROCESSABLE_ENTITY,
-            detail='Проект нельзя изменить: он закрыт!'
+            status_code=HTTPStatus.BAD_REQUEST,
+            detail='Закрытый проект нельзя редактировать!'
         )
 
     if (obj_in.full_amount is not None and
             charity_project.invested_amount > obj_in.full_amount):
         raise HTTPException(
-            status_code=HTTPStatus.UNPROCESSABLE_ENTITY,
+            status_code=HTTPStatus.BAD_REQUEST,
             detail='Нельзя установить для проекта новую требуемую сумму, '
                    'которая меньше уже внесённой!'
         )

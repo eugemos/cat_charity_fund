@@ -9,6 +9,7 @@ from app.services.investment import require_investment
 
 from app.api.validators import (
     check_charity_project_exists,
+    check_charity_project_name_unique,
     check_charity_project_may_be_deleted,
     check_charity_project_may_be_updated,
 )
@@ -24,15 +25,16 @@ router = APIRouter()
     dependencies=[Depends(current_superuser)],
 )
 async def create_charity_project(
-    charity_project: schemas.CharityProjectCreateInput,
+    obj_in: schemas.CharityProjectCreateInput,
     session: AsyncSession = Depends(get_async_session),
 ):
     """Только для суперюзеров."""
+    await check_charity_project_name_unique(obj_in.name, session)
     invested_amount = await require_investment(
-        charity_project.full_amount, session
+        obj_in.full_amount, session
     )
     charity_project = await CharityProjectCRUD().create(
-        charity_project, invested_amount, session
+        obj_in, invested_amount, session
     )
     return charity_project
 
@@ -65,8 +67,8 @@ async def update_charity_project(
         charity_project_id, session
     )
     check_charity_project_may_be_updated(charity_project, obj_in)
-    # if obj_in.name is not None:
-    #     await check_name_duplicate(obj_in.name, session)
+    if obj_in.name is not None and obj_in.name != charity_project.name:
+        await check_charity_project_name_unique(obj_in.name, session)
 
     charity_project = await CharityProjectCRUD().update(
         charity_project, obj_in, session
