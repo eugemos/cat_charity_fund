@@ -28,7 +28,9 @@ async def create_charity_project(
     session: AsyncSession = Depends(get_async_session),
 ):
     """Только для суперюзеров."""
-    invested_amount = await require_investment(charity_project.full_amount)
+    invested_amount = await require_investment(
+        charity_project.full_amount, session
+    )
     charity_project = await CharityProjectCRUD().create(
         charity_project, invested_amount, session
     )

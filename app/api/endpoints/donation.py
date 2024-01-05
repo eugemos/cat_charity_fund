@@ -24,7 +24,7 @@ async def create_donation(
     user: models.User = Depends(current_user),
 ):
     """Только для зарегистрированных пользователей."""
-    invested_amount = await distribute_investment(donation.full_amount)
+    invested_amount = await distribute_investment(donation.full_amount, session)
     donation = await DonationCRUD().create(
         donation, invested_amount, session, user
     )

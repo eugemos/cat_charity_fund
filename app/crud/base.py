@@ -30,6 +30,15 @@ class BaseCRUD:
         db_objs = await session.execute(select(self.model))
         return db_objs.scalars().all()
 
+    async def get_all_opened(
+        self,
+        session: AsyncSession,
+    ) -> list[models.Donation]:
+        db_objs = await session.execute(select(self.model).where(
+            self.model.fully_invested == False
+        ))
+        return db_objs.scalars().all()
+
     async def create(
             self,
             obj_in,
