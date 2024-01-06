@@ -34,9 +34,11 @@ class BaseCRUD:
         self,
         session: AsyncSession,
     ) -> list[models.Donation]:
-        db_objs = await session.execute(select(self.model).where(
-            self.model.fully_invested == False
-        ))
+        db_objs = await session.execute(
+            select(self.model).where(
+                self.model.fully_invested == False  # noqa
+            )
+        )
         return db_objs.scalars().all()
 
     async def create(
@@ -59,5 +61,4 @@ class BaseCRUD:
         session.add(db_obj)
         await session.commit()
         await session.refresh(db_obj)
-        # print(f'*************\n{obj_in=}\n{obj_in_data=}\n{db_obj=}\n**************')
         return db_obj

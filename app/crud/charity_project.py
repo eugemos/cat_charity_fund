@@ -57,7 +57,9 @@ class CharityProjectCRUD(BaseCRUD):
         name: str,
         session: AsyncSession,
     ) -> Optional[models.CharityProject]:
-        db_objs = await session.execute(select(self.model).where(
-            self.model.name == name
-        ))
+        db_objs = await session.execute(
+            select(self.model).where(
+                self.model.name == name
+            )
+        )
         return db_objs.scalars().first()

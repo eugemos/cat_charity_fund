@@ -7,9 +7,6 @@ from app.core.user import current_superuser, current_user
 from app.crud import DonationCRUD
 from app.services.investment import distribute_investment
 
-# from app.api.validators import check_charity_project_exists
-# check_name_duplicate,
-
 router = APIRouter()
 
 
@@ -40,6 +37,7 @@ async def create_donation(
 async def get_all_donations(
     session: AsyncSession = Depends(get_async_session),
 ):
+    """Только для суперпользователей."""
     donations = await DonationCRUD().get_all(session)
     return donations
 
@@ -53,5 +51,6 @@ async def get_user_donations(
     session: AsyncSession = Depends(get_async_session),
     user: models.User = Depends(current_user),
 ):
+    """Только для зарегистрированных пользователей."""
     donations = await DonationCRUD().get_all_by_user(session, user)
     return donations

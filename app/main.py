@@ -7,7 +7,8 @@ from app.core.init_db import create_first_superuser
 
 app = FastAPI(
     title=settings.app_title,
-    description=f'{settings.description}<br/>Разработчик: {settings.app_author}'
+    description=f'{settings.description}<br/>'
+                f'Разработчик: {settings.app_author}'
 )
 
 app.include_router(main_router)

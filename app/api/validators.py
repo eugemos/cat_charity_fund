@@ -11,7 +11,8 @@ async def check_charity_project_exists(
     charity_project_id: int,
     session: AsyncSession,
 ) -> models.CharityProject:
-    charity_project = await CharityProjectCRUD().get(charity_project_id, session)
+    charity_project = await CharityProjectCRUD().get(charity_project_id,
+                                                     session)
     if charity_project is None:
         raise HTTPException(
             status_code=HTTPStatus.NOT_FOUND,
@@ -35,12 +36,8 @@ async def check_charity_project_name_unique(
 def check_charity_project_may_be_deleted(
     charity_project: models.CharityProject
 ) -> None:
-    if charity_project.fully_invested:
-        raise HTTPException(
-            status_code=HTTPStatus.BAD_REQUEST,
-            detail='В проект были внесены средства, не подлежит удалению!'
-        )
-    if charity_project.invested_amount > 0:
+    if (charity_project.fully_invested or
+            charity_project.invested_amount > 0):
         raise HTTPException(
             status_code=HTTPStatus.BAD_REQUEST,
             detail='В проект были внесены средства, не подлежит удалению!'
