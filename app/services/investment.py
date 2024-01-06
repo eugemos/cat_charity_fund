@@ -1,4 +1,5 @@
 from datetime import datetime
+from typing import Union
 
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -46,7 +47,7 @@ async def _do_transfers(
 
 
 def _transfer_money(
-    obj: models.Donation | models.CharityProject,
+    obj: Union[models.Donation, models.CharityProject],
     required_amount: int
 ) -> int:
     """Забирает заданное количество средств из открытого пожертвования
