@@ -13,7 +13,6 @@ from app.api.validators import (
     check_charity_project_may_be_deleted,
     check_charity_project_may_be_updated,
 )
-# check_name_duplicate,
 
 router = APIRouter()
 
@@ -28,7 +27,7 @@ async def create_charity_project(
     obj_in: schemas.CharityProjectCreateInput,
     session: AsyncSession = Depends(get_async_session),
 ):
-    """Только для суперюзеров."""
+    """Только для суперпользователей."""
     await check_charity_project_name_unique(obj_in.name, session)
     invested_amount = await require_investment(
         obj_in.full_amount, session
@@ -47,6 +46,7 @@ async def create_charity_project(
 async def get_all_charity_projects(
     session: AsyncSession = Depends(get_async_session),
 ):
+    """Доступно всем."""
     charity_projects = await CharityProjectCRUD().get_all(session)
     return charity_projects
 
@@ -54,7 +54,6 @@ async def get_all_charity_projects(
 @router.patch(
     '/{charity_project_id}',
     response_model=schemas.CharityProjectGeneralOutput,
-    response_model_exclude_none=True,
     dependencies=[Depends(current_superuser)],
 )
 async def update_charity_project(
@@ -62,7 +61,7 @@ async def update_charity_project(
     obj_in: schemas.CharityProjectUpdateInput,
     session: AsyncSession = Depends(get_async_session),
 ):
-    """Только для суперюзеров."""
+    """Только для суперпользователей."""
     charity_project = await check_charity_project_exists(
         charity_project_id, session
     )
@@ -79,14 +78,13 @@ async def update_charity_project(
 @router.delete(
     '/{charity_project_id}',
     response_model=schemas.CharityProjectGeneralOutput,
-    response_model_exclude_none=True,
     dependencies=[Depends(current_superuser)],
 )
 async def delete_charity_project(
     charity_project_id: int,
     session: AsyncSession = Depends(get_async_session),
 ):
-    """Только для суперюзеров."""
+    """Только для суперпользователей."""
     charity_project = await check_charity_project_exists(
         charity_project_id, session
     )

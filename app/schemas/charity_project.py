@@ -20,9 +20,12 @@ class CharityProjectInputRequired(BaseModel):
 
 class CharityProjectInputOptional(BaseModel):
     """Входная модель с опциональными полями."""
-    name: Optional[str] = Field(None, max_length=100)
-    description: Optional[str] = None
+    name: Optional[str] = Field(None, min_length=1, max_length=100)
+    description: Optional[str] = Field(None, min_length=1)
     full_amount: int = Field(None, ge=1)
+
+    class Config:
+        extra = 'forbid'
 
 
 class CharityProjectCreateInput(CharityProjectInputRequired):
