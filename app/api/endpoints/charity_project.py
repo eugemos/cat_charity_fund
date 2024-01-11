@@ -4,15 +4,9 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from app import schemas
 from app.core.db import get_async_session
 from app.core.user import current_superuser
-from app.crud import CharityProjectCRUD
-from app.services.investment import require_investment
+from app.services import CharityProjectService
 
-from app.api.validators import (
-    check_charity_project_exists,
-    check_charity_project_name_unique,
-    check_charity_project_may_be_deleted,
-    check_charity_project_may_be_updated,
-)
+service = CharityProjectService()
 
 router = APIRouter()
 
@@ -28,13 +22,7 @@ async def create_charity_project(
     session: AsyncSession = Depends(get_async_session),
 ):
     """Только для суперпользователей."""
-    await check_charity_project_name_unique(obj_in.name, session)
-    invested_amount = await require_investment(
-        obj_in.full_amount, session
-    )
-    charity_project = await CharityProjectCRUD().create(
-        obj_in, invested_amount, session
-    )
+    charity_project = await service.create(obj_in, session)
     return charity_project
 
 
@@ -47,7 +35,7 @@ async def get_all_charity_projects(
     session: AsyncSession = Depends(get_async_session),
 ):
     """Доступно всем."""
-    charity_projects = await CharityProjectCRUD().get_all(session)
+    charity_projects = await service.get_all(session)
     return charity_projects
 
 
@@ -62,15 +50,8 @@ async def update_charity_project(
     session: AsyncSession = Depends(get_async_session),
 ):
     """Только для суперпользователей."""
-    charity_project = await check_charity_project_exists(
-        charity_project_id, session
-    )
-    check_charity_project_may_be_updated(charity_project, obj_in)
-    if obj_in.name is not None and obj_in.name != charity_project.name:
-        await check_charity_project_name_unique(obj_in.name, session)
-
-    charity_project = await CharityProjectCRUD().update(
-        charity_project, obj_in, session
+    charity_project = await service.update(
+        charity_project_id, obj_in, session
     )
     return charity_project
 
@@ -85,9 +66,5 @@ async def delete_charity_project(
     session: AsyncSession = Depends(get_async_session),
 ):
     """Только для суперпользователей."""
-    charity_project = await check_charity_project_exists(
-        charity_project_id, session
-    )
-    check_charity_project_may_be_deleted(charity_project)
-    charity_project = await CharityProjectCRUD().remove(charity_project, session)
+    charity_project = await service.delete(charity_project_id, session)
     return charity_project
