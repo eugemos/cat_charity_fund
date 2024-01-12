@@ -4,12 +4,19 @@ from typing import Union
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app import models
-from app.crud import BaseCRUD, CharityProjectCRUD, DonationCRUD
+from app.crud import BaseCRUD
 
 
 class ServiceBase:
-    charity_project_crud = CharityProjectCRUD()
-    donation_crud = DonationCRUD()
+    def __init__(self, main_crud: BaseCRUD, aux_crud: BaseCRUD):
+        self.main_crud = main_crud
+        self.aux_crud = aux_crud
+
+    async def get_all(
+        self, session: AsyncSession
+    ) -> list[Union[models.Donation, models.CharityProject]]:
+        objs = await self.main_crud.get_all(session)
+        return objs
 
     async def do_transfers(
         self, crud: BaseCRUD, full_amount: int, session: AsyncSession
