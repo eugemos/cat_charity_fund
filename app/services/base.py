@@ -59,7 +59,6 @@ class ServiceBase:
         или в открытые проекты (зависит от crud).
         Возвращает реально перемещённое количество средств.
         """
-        assert full_amount > 0
         transferred_amount = 0
         objs = await crud.get_all_opened(session)
         for obj in objs:
@@ -82,10 +81,7 @@ class ServiceBase:
         (зависит от типа obj).
         Возвращает реально перемещённое количество средств.
         """
-        assert required_amount > 0
-        assert not obj.fully_invested
         rest_amount = obj.full_amount - obj.invested_amount
-        assert rest_amount > 0
         if required_amount >= rest_amount:
             obj.invested_amount = obj.full_amount
             obj.fully_invested = True

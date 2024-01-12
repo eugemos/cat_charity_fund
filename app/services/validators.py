@@ -37,7 +37,7 @@ def check_charity_project_may_be_deleted(
     charity_project: models.CharityProject
 ) -> None:
     if (charity_project.fully_invested or
-            charity_project.invested_amount > 0):
+            charity_project.invested_amount):
         raise HTTPException(
             status_code=HTTPStatus.BAD_REQUEST,
             detail='В проект были внесены средства, не подлежит удалению!'
