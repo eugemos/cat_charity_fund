@@ -1,5 +1,5 @@
 from datetime import datetime
-from typing import Union
+from typing import Union, Optional
 
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -18,7 +18,41 @@ class ServiceBase:
         objs = await self.main_crud.get_all(session)
         return objs
 
-    async def do_transfers(
+    async def create(
+        self,
+        obj_in,
+        session: AsyncSession,
+        user: Optional[models.User] = None,
+    ) -> Union[models.Donation, models.CharityProject]:
+        invested_amount = await self._do_transfers(
+            self.aux_crud, obj_in.full_amount, session
+        )
+        creation_data = self._prepare_data_for_creation(
+            obj_in, invested_amount, user
+        )
+        db_obj = await self.main_crud.create(
+            creation_data, session
+        )
+        return db_obj
+
+    def _prepare_data_for_creation(
+        self,
+        obj_in,
+        invested_amount: int,
+        user: Optional[models.User] = None,
+    ) -> dict:
+        data = obj_in.dict()
+        data['invested_amount'] = invested_amount
+        if invested_amount >= obj_in.full_amount:
+            data['fully_invested'] = True
+            data['close_date'] = datetime.now()
+
+        if user is not None:
+            data['user_id'] = user.id
+
+        return data
+
+    async def _do_transfers(
         self, crud: BaseCRUD, full_amount: int, session: AsyncSession
     ) -> int:
         """Перемещает заданное количество средств из открытых пожертвований

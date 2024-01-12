@@ -13,14 +13,6 @@ class CharityProjectCRUD(BaseCRUD):
     def __init__(self):
         super().__init__(models.CharityProject)
 
-    async def create(
-            self,
-            obj_in: schemas.CharityProjectCreateInput,
-            invested_amount: int,
-            session: AsyncSession,
-    ) -> models.CharityProject:
-        return await super().create(obj_in, invested_amount, session)
-
     async def update(
             self,
             db_obj: models.CharityProject,
