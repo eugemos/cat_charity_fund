@@ -3,6 +3,7 @@ from typing import Optional
 from pydantic import BaseModel, Field
 
 from .base import CommonOutput, CommonOutputExtended
+from .constants import MIN_FULL_AMOUNT
 
 
 class DonationOutputFull(CommonOutputExtended):
@@ -33,5 +34,5 @@ class DonationCreateOutput(DonationOutputShortened):
 
 class DonationCreateInput(BaseModel):
     """Входная модель для создания."""
-    full_amount: int = Field(..., ge=1)
+    full_amount: int = Field(ge=MIN_FULL_AMOUNT)
     comment: Optional[str] = None
