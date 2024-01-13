@@ -1,7 +1,7 @@
 from fastapi import APIRouter, HTTPException
 
-from app.core.user import auth_backend, fastapi_users
 from app import schemas
+from app.core.user import auth_backend, fastapi_users
 
 router = APIRouter()
 

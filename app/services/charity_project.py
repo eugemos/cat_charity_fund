@@ -12,46 +12,43 @@ from .validators import (
 
 
 class CharityProjectService(ServiceBase):
-    def __init__(self):
-        super().__init__(CharityProjectCRUD(), DonationCRUD())
+    def __init__(self, session: AsyncSession):
+        super().__init__(CharityProjectCRUD(), DonationCRUD(), session)
 
     async def create(
         self,
         obj_in: schemas.CharityProjectCreateInput,
-        session: AsyncSession
     ) -> models.CharityProject:
-        await check_charity_project_name_unique(obj_in.name, session)
-        charity_project = await super().create(obj_in, session)
+        await check_charity_project_name_unique(obj_in.name, self.session)
+        charity_project = await super().create(obj_in)
         return charity_project
 
     async def update(
         self,
         charity_project_id: int,
         obj_in: schemas.CharityProjectUpdateInput,
-        session: AsyncSession,
     ) -> models.CharityProject:
         charity_project = await check_charity_project_exists(
-            charity_project_id, session
+            charity_project_id, self.session
         )
         check_charity_project_may_be_updated(charity_project, obj_in)
         if obj_in.name is not None and obj_in.name != charity_project.name:
-            await check_charity_project_name_unique(obj_in.name, session)
+            await check_charity_project_name_unique(obj_in.name, self.session)
 
         charity_project = await self.main_crud.update(
-            charity_project, obj_in, session
+            charity_project, obj_in, self.session
         )
         return charity_project
 
     async def delete(
         self,
         charity_project_id: int,
-        session: AsyncSession,
     ) -> models.CharityProject:
         charity_project = await check_charity_project_exists(
-            charity_project_id, session
+            charity_project_id, self.session
         )
         check_charity_project_may_be_deleted(charity_project)
         charity_project = await self.main_crud.remove(
-            charity_project, session
+            charity_project, self.session
         )
         return charity_project

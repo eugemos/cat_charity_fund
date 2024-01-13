@@ -2,8 +2,8 @@ from typing import Optional
 
 from pydantic import BaseModel, Field
 
+from core.constants import MIN_FULL_AMOUNT
 from .base import CommonOutput, CommonOutputExtended
-from .constants import MIN_FULL_AMOUNT
 
 
 class DonationOutputFull(CommonOutputExtended):

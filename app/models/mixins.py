@@ -3,7 +3,7 @@ from datetime import datetime
 from sqlalchemy import Column, Integer, Boolean, DateTime
 
 
-class FundCommon:
+class CommonFundFieldsMixin:
     """Содержит общие поля моделей, относящихся к логике фонда."""
     full_amount = Column(Integer, nullable=False)
     invested_amount = Column(Integer, default=0)

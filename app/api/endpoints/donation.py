@@ -4,9 +4,8 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from app import models, schemas
 from app.core.db import get_async_session
 from app.core.user import current_superuser, current_user
-from app.services import DonationService
+from app.services import DonationService as Service
 
-service = DonationService()
 
 router = APIRouter()
 
@@ -22,7 +21,7 @@ async def create_donation(
     user: models.User = Depends(current_user),
 ):
     """Только для зарегистрированных пользователей."""
-    donation = await service.create(obj_in, session, user)
+    donation = await Service(session).create(obj_in, user)
     return donation
 
 
@@ -36,7 +35,7 @@ async def get_all_donations(
     session: AsyncSession = Depends(get_async_session),
 ):
     """Только для суперпользователей."""
-    donations = await service.get_all(session)
+    donations = await Service(session).get_all()
     return donations
 
 
@@ -50,5 +49,5 @@ async def get_user_donations(
     user: models.User = Depends(current_user),
 ):
     """Только для зарегистрированных пользователей."""
-    donations = await service.get_all_by_user(session, user)
+    donations = await Service(session).get_all_by_user(user)
     return donations

@@ -8,30 +8,32 @@ from app.crud import BaseCRUD
 
 
 class ServiceBase:
-    def __init__(self, main_crud: BaseCRUD, aux_crud: BaseCRUD):
+    def __init__(
+        self, main_crud: BaseCRUD, aux_crud: BaseCRUD, session: AsyncSession
+    ):
         self.main_crud = main_crud
         self.aux_crud = aux_crud
+        self.session = session
 
     async def get_all(
-        self, session: AsyncSession
+        self
     ) -> list[Union[models.Donation, models.CharityProject]]:
-        objs = await self.main_crud.get_all(session)
+        objs = await self.main_crud.get_all(self.session)
         return objs
 
     async def create(
         self,
         obj_in,
-        session: AsyncSession,
         user: Optional[models.User] = None,
     ) -> Union[models.Donation, models.CharityProject]:
         invested_amount = await self._do_transfers(
-            self.aux_crud, obj_in.full_amount, session
+            self.aux_crud, obj_in.full_amount,
         )
         creation_data = self._prepare_data_for_creation(
             obj_in, invested_amount, user
         )
         db_obj = await self.main_crud.create(
-            creation_data, session
+            creation_data, self.session
         )
         return db_obj
 
@@ -53,19 +55,19 @@ class ServiceBase:
         return data
 
     async def _do_transfers(
-        self, crud: BaseCRUD, full_amount: int, session: AsyncSession
+        self, crud: BaseCRUD, full_amount: int
     ) -> int:
         """Перемещает заданное количество средств из открытых пожертвований
         или в открытые проекты (зависит от crud).
         Возвращает реально перемещённое количество средств.
         """
         transferred_amount = 0
-        objs = await crud.get_all_opened(session)
+        objs = await crud.get_all_opened(self.session)
         for obj in objs:
             transferred_amount += self._transfer_money(
                 obj, full_amount - transferred_amount
             )
-            session.add(obj)
+            self.session.add(obj)
             if transferred_amount >= full_amount:
                 break
 

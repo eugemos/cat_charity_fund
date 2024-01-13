@@ -2,11 +2,11 @@ from typing import Optional
 
 from pydantic import BaseModel, Field
 
-from .base import CommonOutputExtended
-from .constants import (
+from core.constants import (
     MIN_FULL_AMOUNT, MIN_DESCRIPTION_LENGTH,
     MIN_NAME_LENGTH, MAX_NAME_LENGTH
 )
+from .base import CommonOutputExtended
 
 
 class CharityProjectGeneralOutput(CommonOutputExtended):
