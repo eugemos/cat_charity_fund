@@ -2,7 +2,7 @@ from typing import Optional
 
 from pydantic import BaseModel, Field
 
-from core.constants import MIN_FULL_AMOUNT
+from app.core.constants import MIN_FULL_AMOUNT
 from .base import CommonOutput, CommonOutputExtended
 
 

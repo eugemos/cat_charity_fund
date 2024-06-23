@@ -3,7 +3,7 @@ from typing import Optional
 
 from pydantic import BaseModel, Field
 
-from core.constants import MIN_FULL_AMOUNT, MIN_INVESTED_AMOUNT
+from app.core.constants import MIN_FULL_AMOUNT, MIN_INVESTED_AMOUNT
 
 
 class CommonOutput(BaseModel):

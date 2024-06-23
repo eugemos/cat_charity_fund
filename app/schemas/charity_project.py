@@ -2,7 +2,7 @@ from typing import Optional
 
 from pydantic import BaseModel, Field
 
-from core.constants import (
+from app.core.constants import (
     MIN_FULL_AMOUNT, MIN_DESCRIPTION_LENGTH,
     MIN_NAME_LENGTH, MAX_NAME_LENGTH
 )
